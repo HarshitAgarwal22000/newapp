@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Example</title>
+</head>
+<body>
+    <h1>CRUD Example</h1>
+
+    <!-- Create Form -->
+    <h2>Create Record</h2>
+    <form id="createForm">
+        <label for="createContent">Content:</label>
+        <input type="text" id="createContent" required>
+        <button type="submit">Create</button>
+    </form>
+
+    <!-- Record List -->
+    <h2>Records</h2>
+    <ul id="recordList">
+        <!-- Records will be displayed here -->
+    </ul>
+
+    <!-- Update Form -->
+    <h2>Update Record</h2>
+    <form id="updateForm">
+        <input type="hidden" id="updateId">
+        <label for="updateContent">Content:</label>
+        <input type="text" id="updateContent" required>
+        <button type="submit">Update</button>
+    </form>
+
+    <!-- Delete Form -->
+    <h2>Delete Record</h2>
+    <form id="deleteForm">
+        <input type="hidden" id="deleteId">
+        <button type="submit">Delete</button>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const createForm = document.getElementById("createForm");
+            const updateForm = document.getElementById("updateForm");
+            const deleteForm = document.getElementById("deleteForm");
+            const recordList = document.getElementById("recordList");
+
+            // Function to fetch and display records
+            function loadRecords() {
+                fetch("/api/dns/") // Replace with your API endpoint
+                    .then((response) => response.json())
+                    .then((data) => {
+                        recordList.innerHTML = "";
+                        data.forEach((record) => {
+                            const li = document.createElement("li");
+                            li.innerHTML = `${record.name} (${record.type}): ${record.content}`;
+                            const updateButton = document.createElement("button");
+                            updateButton.textContent = "Update";
+                            updateButton.addEventListener("click", () => populateUpdateForm(record));
+                            const deleteButton = document.createElement("button");
+                            deleteButton.textContent = "Delete";
+                            deleteButton.addEventListener("click", () => populateDeleteForm(record.id));
+                            li.appendChild(updateButton);
+                            li.appendChild(deleteButton);
+                            recordList.appendChild(li);
+                        });
+                    });
+            }
+
+            // Function to populate the update form
+            function populateUpdateForm(record) {
+                document.getElementById("updateId").value = record.id;
+                document.getElementById("updateContent").value = record.content;
+            }
+
+            // Function to populate the delete form
+            function populateDeleteForm(id) {
+                document.getElementById("deleteId").value = id;
+            }
+
+            // Event listener for submitting the create form
+            createForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const content = document.getElementById("createContent").value;
+                fetch("/api/dns/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ content }), // Replace with your form data
+                })
+                    .then(() => {
+                        loadRecords();
+                        document.getElementById("createContent").value = "";
+                    })
+                    .catch((error) => console.error(error));
+            });
+
+            // Event listener for submitting the update form
+            updateForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const id = document.getElementById("updateId").value;
+                const content = document.getElementById("updateContent").value;
+                fetch(`/api/dns/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ content }), // Replace with your form data
+                })
+                    .then(() => {
+                        loadRecords();
+                        document.getElementById("updateId").value = "";
+                        document.getElementById("updateContent").value = "";
+                    })
+                    .catch((error) => console.error(error));
+            });
+
+            // Event listener for submitting the delete form
+            deleteForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const id = document.getElementById("deleteId").value;
+                fetch(`/api/dns/${id}`, {
+                    method: "DELETE",
+                })
+                    .then(() => {
+                        loadRecords();
+                        document.getElementById("deleteId").value = "";
+                    })
+                    .catch((error) => console.error(error));
+            });
+
+            // Initial load of records
+            loadRecords();
+        });
+    </script>
+</body>
+</html>
