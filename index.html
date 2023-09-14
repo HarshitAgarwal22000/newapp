@@ -46,7 +46,7 @@
 
             
             function loadRecords() {
-                fetch("/api/dns/") 
+                fetch("/api/v1/") 
                     .then((response) => response.json())
                     .then((data) => {
                         recordList.innerHTML = "";
@@ -81,7 +81,7 @@
             createForm.addEventListener("submit", (e) => {
                 e.preventDefault();
                 const content = document.getElementById("createContent").value;
-                fetch("/api/dns/", {
+                fetch("/api/v1/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -100,7 +100,7 @@
                 e.preventDefault();
                 const id = document.getElementById("updateId").value;
                 const content = document.getElementById("updateContent").value;
-                fetch(`/api/dns/${id}`, {
+                fetch(`/api/v1/${id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -119,7 +119,7 @@
             deleteForm.addEventListener("submit", (e) => {
                 e.preventDefault();
                 const id = document.getElementById("deleteId").value;
-                fetch(`/api/dns/${id}`, {
+                fetch(`/api/v1/${id}`, {
                     method: "DELETE",
                 })
                     .then(() => {

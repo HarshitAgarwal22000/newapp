@@ -33,7 +33,7 @@
     <script>
         
         async function fetchDNSRecords() {
-            const response = await fetch('/api/dns/');
+            const response = await fetch('/api/v1/');
             const records = await response.json();
             const recordsList = document.getElementById('records-list');
             recordsList.innerHTML = '';
@@ -54,7 +54,7 @@
             });
 
             try {
-                const response = await fetch('/api/dns/', {
+                const response = await fetch('/api/v1/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
