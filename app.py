@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-# PowerDNS API configuration (replace with your server details)
 PDNS_API_URL = "http://localhost:8081/api/v1"
 PDNS_API_KEY = "hello"
 
